@@ -1,34 +1,70 @@
-# Basic Object Detection and Tracking using OpenCV
+# Object Detection & Tracking from Scratch with OpenCV
 
-This repository contains a simple implementation of object detection and tracking using YOLOv4. The project focuses on scenarios where objects do not experience occlusion, making it suitable for clear and direct tracking applications. The codebase provides a foundational approach to object detection and tracking without employing advanced algorithms like Deep SORT.
+![Python](https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white)
+![OpenCV](https://img.shields.io/badge/OpenCV-DNN-5C3EE8?logo=opencv&logoColor=white)
+![YOLOv4](https://img.shields.io/badge/YOLOv4-Darknet-00FFFF)
 
-## Overview
+A lightweight object detection and tracking pipeline built from first principles. It uses
+**YOLOv4** through **OpenCV's DNN module** to detect objects, and a simple **centroid tracker**
+(written by hand, without Deep SORT) to give each object a persistent ID across frames.
 
-The primary objective of this repository is to demonstrate basic object detection and tracking using the YOLOv4 model. This implementation leverages OpenCV's DNN module for detecting objects within a video stream or static images. The repository is intended for educational purposes and provides a stepping stone for further development in the field of object detection and tracking.
+---
 
-### Features
+## How it works
 
-- **YOLOv4 Integration**: Utilizes the YOLOv4 model for efficient object detection.
-- **Basic Tracking**: Implements basic object tracking for scenarios without occlusion.
-- **OpenCV DNN Module**: Employs OpenCV's Deep Neural Network (DNN) module for model loading and inference.
-- **Simple and Clear Codebase**: Designed for simplicity and ease of understanding.
-## Configuration
+1. **Detection** (`object_detection.py`)
+   - Loads YOLOv4 weights and config with `cv2.dnn.readNet`.
+   - Uses the CUDA backend when it is available.
+   - Runs inference at 608×608 with a confidence threshold of 0.5 and an NMS threshold of 0.4.
+2. **Tracking** (`object_tracking.py`)
+   - Computes the centre point of every bounding box.
+   - Matches each centre to the tracked objects from the previous frame by Euclidean distance (< 20 px).
+   - Updates IDs that match, removes IDs for objects that disappear, and assigns new IDs to new detections.
+   - Draws boxes, centre points and IDs on each frame.
 
-You can modify the detection parameters such as confidence thresholds and non-max suppression settings in the script. Adjust the parameters to optimize performance for your specific use case.
+## Getting started
 
-## Code Structure
+```bash
+git clone https://github.com/YogiOnCode/OpenCV_Obj_Detection_from_Scratch.git
+cd OpenCV_Obj_Detection_from_Scratch
+pip install opencv-python numpy
+```
 
-- **`code.py`**: The main script that initializes object detection and tracking.
-- **`object_detection.py`**: Contains the implementation of the object detection class using YOLOv4 and OpenCV.
+Download the YOLOv4 model files ([Darknet releases](https://github.com/AlexeyAB/darknet/releases)) and place them as follows:
 
-## Limitations
+```
+dnn_model/
+├── yolov4.weights
+├── yolov4.cfg
+└── classes.txt      # COCO class names
+```
 
-- **No Occlusion Handling**: This implementation does not handle occlusions effectively. It is designed for scenarios where objects remain visible.
-- **Basic Tracking**: The tracking approach is basic and may not be suitable for complex scenarios involving fast-moving or overlapping objects.
+Update the paths in `ObjectDetection.__init__` if your folder layout differs, then run:
 
-## Future Enhancements
+```bash
+python object_tracking.py
+```
 
-- **Advanced Tracking**: Consider integrating advanced tracking algorithms like Deep SORT for improved performance in complex scenarios.
-- **Occlusion Handling**: Implement methods to handle occlusions and improve detection accuracy.
-- **Optimization**: Optimize the code for better performance and efficiency.
+Press `Esc` to quit.
 
+## Repository structure
+
+```
+├── object_detection.py   # YOLOv4 detector wrapper (OpenCV DNN)
+├── object_tracking.py    # Centroid tracker + visualization
+└── code.py               # Earlier variant of the tracking loop
+```
+
+## Limitations and next steps
+
+- **No occlusion handling:** IDs are lost when objects overlap or leave the frame briefly.
+- **Distance-only matching:** fast-moving objects can be reassigned to new IDs.
+- **Next steps:** add Kalman-filter prediction or Deep SORT for appearance-based re-identification.
+
+## Tech stack
+
+Python · OpenCV (DNN, CUDA backend) · YOLOv4 · NumPy
+
+## Author
+
+**Yogeswaran Amsavalli** · [GitHub](https://github.com/YogiOnCode)
