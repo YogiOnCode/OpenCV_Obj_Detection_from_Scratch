@@ -27,7 +27,7 @@ A lightweight object detection and tracking pipeline built from first principles
 ```bash
 git clone https://github.com/YogiOnCode/OpenCV_Obj_Detection_from_Scratch.git
 cd OpenCV_Obj_Detection_from_Scratch
-pip install opencv-python numpy
+pip install -r requirements.txt
 ```
 
 Download the YOLOv4 model files ([Darknet releases](https://github.com/AlexeyAB/darknet/releases)) and place them as follows:
@@ -64,6 +64,10 @@ Press `Esc` to quit.
 ## Tech stack
 
 Python · OpenCV (DNN, CUDA backend) · YOLOv4 · NumPy
+
+## License
+
+Released under the [MIT License](LICENSE).
 
 ## Author
 
